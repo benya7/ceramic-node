@@ -4,8 +4,8 @@
   "scripts": {
     "ceramic-node": "CERAMIC_ENABLE_EXPERIMENTAL_COMPOSE_DB='true' npx ceramic daemon",
     "clean": "rm -rf composites m schemas/Content.graphql schemas/Subscriptions.graphql && mkdir composites",
-    "generate-composites": "node scripts/create-composite.js",
-    "graphql": "node run-graphql-server.js"
+    "generate-composites": "npm run clean && node scripts/create-composite.js",
+    "graphql": "node scripts/run-graphql-server.js"
   },
   "keywords": [],
   "author": "en0c-026",
