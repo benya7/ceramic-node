@@ -14,6 +14,7 @@ const did = new DID({
   resolver: getResolver(),
   provider: new Ed25519Provider(privateKey),
 })
+
 await did.authenticate()
 
 const server = await serveEncodedDefinition({
@@ -21,6 +22,7 @@ const server = await serveEncodedDefinition({
   graphiql: true,
   path: new URL('../composites/merged-composite.json', import.meta.url),
   port: 5001,
+  did
 })
 
 console.log(`Server started on ${server.url}`)
