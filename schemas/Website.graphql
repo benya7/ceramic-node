@@ -1,0 +1,5 @@
+type Website @createModel(accountRelation: LIST, description: "A Website") {
+  websiteName: String! @string(maxLength: 100)
+  contentID: ID
+  subscriptionsID: ID
+}
