@@ -2,16 +2,16 @@
   "name": "ceramic-node",
   "version": "1.0.0",
   "scripts": {
-    "ceramic-node": "CERAMIC_ENABLE_EXPERIMENTAL_COMPOSE_DB='true' npx ceramic daemon",
+    "ceramic-node": "CERAMIC_ENABLE_EXPERIMENTAL_COMPOSE_DB='true' ceramic daemon",
     "clean": "rm -rf composites m schemas/Content.graphql schemas/Subscriptions.graphql && mkdir composites",
     "generate-composites": "npm run clean && node scripts/create-composite.js",
-    "graphql": "node scripts/run-graphql-server.js"
+    "graphql": "node scripts/run-graphql-server.js",
+    "example-queries": "node scripts/execute-example-queries.js"
   },
   "keywords": [],
   "author": "en0c-026",
   "license": "ISC",
   "dependencies": {
-    "@ceramicnetwork/cli": "^2.17.0",
     "@ceramicnetwork/http-client": "^2.12.0",
     "@composedb/cli": "^0.3.1",
     "@composedb/client": "^0.3.1",
