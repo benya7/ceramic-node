@@ -29,7 +29,6 @@ console.log("Create composites from schemas...")
 const websiteComposite = await createComposite(ceramic, './schemas/Website.graphql')
 // Get model stream ID required to create others composites
 const websiteModelID = websiteComposite.modelIDs[0]
-
 // Create Content graphql schema
 fs.writeFile('./schemas/Content.graphql', `type Website @loadModel(id: ${websiteModelID}) {
   id: ID!
@@ -62,6 +61,7 @@ type Subscriptions @createModel(accountRelation: LIST, description: "Subscriptio
   if (err) return console.log(err);
   console.log('Subscriptions Model created!');
 })
+
 // Create Content composite from graphql schema
 const contentComposite = await createComposite(ceramic, './schemas/Content.graphql')
 // Create Subscriptions composite from graphql schema
@@ -74,12 +74,16 @@ console.log("Indexing models...")
 await mergedComposite.startIndexingOn(ceramic)
 
 console.log("Writing config files...")
-// Write encoded composite json file, definitions and composite graphql schema
+// Write encoded composite json file, definitions and composite granephql schema
 await writeEncodedComposite(mergedComposite, './composites/merged-composite.json')
 await writeEncodedCompositeRuntime(
   ceramic, 
   './composites/merged-composite.json', 
   './composites/definitions.ts'
 )
+await writeEncodedCompositeRuntime(
+  ceramic,
+  './composites/merged-composite.json',
+  './composites/definitions.js'
+)
 await writeGraphQLSchema(mergedComposite.toRuntime(), './composites/Composite.graphql')
-console.log("Done!")
