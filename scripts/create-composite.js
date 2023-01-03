@@ -94,7 +94,9 @@ await new Promise((resolve) => setTimeout(() => resolve(), 2000))
 const finalModelComposite = await createComposite(ceramic, './schemas/FinalModel.graphql')
 
 // Merge all composites
-const mergedComposite = Composite.from([pieceComposite, subscriptionComposite, finalModelComposite])
+//const mergedComposite = Composite.from([pieceComposite, subscriptionComposite, finalModelComposite])
+console.log(finalModelComposite.modelIDs)
+const mergedComposite = finalModelComposite
 
 // Index the models into ceramic node
 console.log("Indexing models...")

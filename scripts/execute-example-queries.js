@@ -66,13 +66,11 @@ console.log("Executing queries...")
 const { data: testWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, { input: { content: {  websiteName: "Test Website"  }}})
 const { data: musicWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, { input: { content: { websiteName: "Music Website" }}})
 const { data: moviesWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, { input: { content: { websiteName: "Movies Website" }}})
-const { data: dumpDocumentData } = await compose.executeQuery(CREATE_WEBSITE, { input: { content: { websiteName: "Dump Document" } } })
 
 
 const testWebsite = testWebsiteData.createWebsite.document
 const musicWebsite = musicWebsiteData.createWebsite.document
 const moviesWebsite = moviesWebsiteData.createWebsite.document
-const dumpDocument = dumpDocumentData.createWebsite.document
 
 
 // Create pieces
@@ -165,5 +163,4 @@ await compose.executeQuery(CREATE_SUBSCRIPTION, {
 
 
 console.log(`${testWebsite.websiteName} ID: ${testWebsite.id}`)
-console.log(`${dumpDocument.websiteName} ID: ${dumpDocument.id}`)
 
