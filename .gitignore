@@ -1,3 +1,7 @@
 node_modules
 .env
 package-lock.json
+composites
+schemas/Subscription.graphql
+schemas/Piece.graphql
+schemas/FinalModel.graphql
