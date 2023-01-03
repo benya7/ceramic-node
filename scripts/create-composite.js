@@ -6,10 +6,8 @@ import { fromString } from "uint8arrays"
 import { getResolver } from "key-did-resolver"
 import { CeramicClient } from '@ceramicnetwork/http-client'
 import { Ed25519Provider } from "key-did-provider-ed25519"
-import { createComposite, writeEncodedCompositeRuntime } from '@composedb/devtools-node'
-import { writeEncodedComposite } from '@composedb/devtools-node'
-import { writeGraphQLSchema } from '@composedb/devtools-node'
-
+import { createComposite, writeEncodedCompositeRuntime, writeEncodedComposite, writeGraphQLSchema } from '@composedb/devtools-node'
+import { Composite } from '@composedb/devtools'
 // Create DID controller for ceramic client
 const privateKey = fromString(
   process.env.PRIVATE_KEY,
@@ -29,45 +27,74 @@ console.log("Create composites from schemas...")
 const websiteComposite = await createComposite(ceramic, './schemas/Website.graphql')
 // Get model stream ID required to create others composites
 const websiteModelID = websiteComposite.modelIDs[0]
-// Create Content graphql schema
-fs.writeFile('./schemas/Content.graphql', `type Website @loadModel(id: ${websiteModelID}) {
+// Create Piece graphql schema
+fs.writeFile('./schemas/Piece.graphql', `type Website @loadModel(id: "${websiteModelID}") {
   id: ID!
 }
 
-type Content @createModel(accountRelation: LIST, description: "Content for a website") {
+type Piece @createModel(accountRelation: LIST, description: "Piece of content") {
   websiteID: StreamID! @documentReference(model: "Website")
   website: Website! @relationDocument(property: "websiteID")
-  content: [Piece]! @list(maxLength: 10000)
-}
-
-type Piece {
   name: String! @string(maxLength: 100)
   cid: String! @string(maxLength: 100)
-}`, function (err) {
+  approved: Boolean!
+}
+`, function (err) {
   if (err) return console.log(err);
-  console.log('Content Model created!');
+  console.log('Piece schema created!');
 })
 
-// Create Subscriptions graphql schema
-fs.writeFile('./schemas/Subscriptions.graphql', `type Website @loadModel(id: ${websiteModelID}) {
+await new Promise((resolve) => setTimeout(() => resolve(), 2000))
+// Create Piece composite from graphql schema
+const pieceComposite = await createComposite(ceramic, './schemas/Piece.graphql')
+const pieceModelID = pieceComposite.modelIDs[1]
+
+fs.writeFile('./schemas/Subscription.graphql', `type Website @loadModel(id: "${websiteModelID}") {
   id: ID!
 }
 
-type Subscriptions @createModel(accountRelation: LIST, description: "Subscription IDs for a website") {
+type Subscription @createModel(accountRelation: LIST, description: "Subcription Website") {
   websiteID: StreamID! @documentReference(model: "Website")
   website: Website! @relationDocument(property: "websiteID")
-  subscribedIDs: [ID]! @list(maxLength: 100)
-}`, function (err) {
+	subscribedID: StreamID! @documentReference(model: "Website")
+	subcribedWebsite: Website! @relationDocument(property: "subscribedID")
+}
+`, function (err) {
   if (err) return console.log(err);
-  console.log('Subscriptions Model created!');
+  console.log('Subscription schema created!');
 })
 
-// Create Content composite from graphql schema
-const contentComposite = await createComposite(ceramic, './schemas/Content.graphql')
-// Create Subscriptions composite from graphql schema
-const subscriptionsComposite = await createComposite(ceramic, './schemas/Subscriptions.graphql')
+await new Promise((resolve) => setTimeout(() => resolve(), 2000))
+// Create Subscription composite from graphql schema
+const subscriptionComposite = await createComposite(ceramic, './schemas/Subscription.graphql')
+const subscriptionModelID = subscriptionComposite.modelIDs[1]
+
+// Create FinalModel graphql schema
+fs.writeFile('./schemas/FinalModel.graphql', `type Piece @loadModel(id: "${pieceModelID}") {
+  id: ID!
+}
+
+type Subscription @loadModel(id: "${subscriptionModelID}") {
+  id: ID!
+}
+
+type Website @loadModel(id: "${websiteModelID}") {
+  pieces: [Piece] @relationFrom(model: "Piece", property: "websiteID")
+  piecesCount: Int! @relationCountFrom(model: "Piece", property: "websiteID")
+  subscriptions: [Subscription] @relationFrom(model: "Subscription", property: "websiteID")
+  subscriptionsCount: Int! @relationCountFrom(model: "Subscription", property: "websiteID")
+}
+`, function (err) {
+  if (err) return console.log(err);
+  console.log('FinalModel schema created!');
+})
+
+await new Promise((resolve) => setTimeout(() => resolve(), 2000))
+// Create FinalModel composite from graphql schema
+const finalModelComposite = await createComposite(ceramic, './schemas/FinalModel.graphql')
+
 // Merge all composites
-const mergedComposite = websiteComposite.merge([contentComposite, subscriptionsComposite])
+const mergedComposite = Composite.from([pieceComposite, subscriptionComposite, finalModelComposite])
 
 // Index the models into ceramic node
 console.log("Indexing models...")

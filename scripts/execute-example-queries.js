@@ -30,141 +30,140 @@ const compose = new ComposeClient({
 const CREATE_WEBSITE = `
   mutation CreateWebsite($input: CreateWebsiteInput!) {
       createWebsite(input: $input) {
-        document {
-        id
-        websiteName
-        contentID
-        subscriptionsID
-      }
+				document {
+					id
+					websiteName
+				}
     }
   }
 `
-const CREATE_CONTENT = `
-  mutation CreateContent($input: CreateContentInput!) {
-      createContent(input: $input) {
-        document {
+const CREATE_PIECE = `
+  mutation CreatePiece($input: CreatePieceInput!) {
+		createPiece(input: $input) {
+			document {
+        websiteID
+        id
+        name
+        approved
+			}
+    }
+  }
+`
+const CREATE_SUBSCRIPTION = `
+  mutation CreateSubscription($input: CreateSubscriptionInput!) {
+    createSubscription(input: $input) {
+    document {
         id
         websiteID
-        content {
-          name
-          cid
-        }
+        subscribedID
       }
     }
   }
 `
-const CREATE_SUBSCRIPTIONS = `
-  mutation CreateSubscriptions($input: CreateSubscriptionsInput!) {
-      createSubscriptions(input: $input) {
-        document {
-        id
-        websiteID
-        subscribedIDs
-      }
-    }
-  }
-`
-const UPDATE_WEBSITE = `
-  mutation UpdateWebsite($input: UpdateWebsiteInput!) {
-    updateWebsite(input: $input) {
-      document {
-        id
-        websiteName
-        contentID
-        subscriptionsID
-      }
-    }
-  }
-`
+
 console.log("Executing queries...")
 // Create websites
 const { data: testWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, { input: { content: {  websiteName: "Test Website"  }}})
 const { data: musicWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, { input: { content: { websiteName: "Music Website" }}})
 const { data: moviesWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, { input: { content: { websiteName: "Movies Website" }}})
+const { data: dumpDocumentData } = await compose.executeQuery(CREATE_WEBSITE, { input: { content: { websiteName: "Dump Document" } } })
+
 
 const testWebsite = testWebsiteData.createWebsite.document
 const musicWebsite = musicWebsiteData.createWebsite.document
 const moviesWebsite = moviesWebsiteData.createWebsite.document
+const dumpDocument = dumpDocumentData.createWebsite.document
 
-// Create contents
 
-const { data: testWebsiteContentData } = await compose.executeQuery(CREATE_CONTENT, { 
+// Create pieces
+
+await compose.executeQuery(CREATE_PIECE, { 
   input: { 
     content: { 
       websiteID: testWebsite.id,
-      content: [
-        { name: "aguila", cid: "bafkreifwanxptzn7jct56yl7q3h633ymn7bb2bjut6sxyulnas3skyg47e"},
-        { name: "1inch logo", cid: "bafkreie5oy362ozvorrmynw5ej42kzvnd6bsnyt5aoofcw4mo4likcgymu"}
-      ]
+      name: "Aguile",
+      cid: "bafkreifwanxptzn7jct56yl7q3h633ymn7bb2bjut6sxyulnas3skyg47e",
+      approved: true
     } 
   } 
 })
-const { data: musicWebsiteContentData } = await compose.executeQuery(CREATE_CONTENT, {
-  input: {
-    content: {
-      websiteID: musicWebsite.id,
-      content: [
-        { name: "In Rainbows - Radiohead", cid: "bafybeiast2bhqqkcku2hvvrgo7t4bro7poucouszoq7oludpug2fixkrnm" },
-        { name: "The Dark Side Of The Moon - Pink Floyd", cid: "bafkreidybluf5b6o4mb345lnpgrpa5g3e2ztbndou4lj7y3crts4yqy53u" }
-      ]
-    }
-  }
-})
-const { data: moviesWebsiteContentData } = await compose.executeQuery(CREATE_CONTENT, {
-  input: {
-    content: {
-      websiteID: moviesWebsite.id,
-      content: [
-        { name: "Avatar (2009)", cid: "bafkreiff5rexqbzrcr4dmwh5vkbhpidkuauxwlqjvs4d4f3h62tplqqefu" },
-        { name: "The Terminator (1984)", cid: "bafkreie5vk3pum2xseuvfzszjalzn54vxprhq4ftkvdpirllf4zvyc7uza" }
-      ]
-    }
-  }
-})
 
-const testWebsiteContent = testWebsiteContentData.createContent.document
-const musicWebsiteContent = musicWebsiteContentData.createContent.document
-const moviesWebsiteContent = moviesWebsiteContentData.createContent.document
-
-// Create subscriptions
-
-const { data: testWebsiteSubscriptionsData } = await compose.executeQuery(CREATE_SUBSCRIPTIONS, {
+await compose.executeQuery(CREATE_PIECE, {
   input: {
     content: {
       websiteID: testWebsite.id,
-      subscribedIDs: [musicWebsite.id, moviesWebsite.id]
+      name: "ryan cat meme",
+      cid: "bafkreiaakxh74mhjx2bflfv34rcpo27ynqbny3pg5nzrg6wjkw7qti2bmq",
+      approved: false
     }
   }
 })
 
-//Update websites
-
-await compose.executeQuery(UPDATE_WEBSITE, {
+await compose.executeQuery(CREATE_PIECE, {
   input: {
-    id: testWebsite.id,
     content: {
-      contentID: testWebsiteContent.id,
-      subscriptionsID: testWebsiteSubscriptionsData.createSubscriptions.document.id
+      websiteID: musicWebsite.id,
+      name: "The Dark Side Of The Moon - Pink Floyd",
+      cid: "bafkreidybluf5b6o4mb345lnpgrpa5g3e2ztbndou4lj7y3crts4yqy53u",
+      approved: false
     }
   }
 })
 
-await compose.executeQuery(UPDATE_WEBSITE, {
+await compose.executeQuery(CREATE_PIECE, {
   input: {
-    id: musicWebsite.id,
     content: {
-      contentID: musicWebsiteContent.id
+      websiteID: musicWebsite.id,
+      name: "The King Of Limbs - Radiohead",
+      cid: "bafkreibgighuh2i2ndn4vk4iustoveexry2nshjekgnebhfxvgkptu4yw4",
+      approved: true
     }
   }
 })
 
-await compose.executeQuery(UPDATE_WEBSITE, {
+await compose.executeQuery(CREATE_PIECE, {
   input: {
-    id: moviesWebsite.id,
     content: {
-      contentID: moviesWebsiteContent.id,
+      websiteID: moviesWebsite.id,
+      name: "Avatar (2009)",
+      cid: "bafkreiff5rexqbzrcr4dmwh5vkbhpidkuauxwlqjvs4d4f3h62tplqqefu",
+      approved: true
     }
   }
 })
+
+await compose.executeQuery(CREATE_PIECE, {
+  input: {
+    content: {
+      websiteID: moviesWebsite.id,
+      name: "The Terminator (1984)",
+      cid: "bafkreie5vk3pum2xseuvfzszjalzn54vxprhq4ftkvdpirllf4zvyc7uza",
+      approved: false
+    }
+  }
+})
+
+// Create subscriptions
+
+await compose.executeQuery(CREATE_SUBSCRIPTION, {
+  input: {
+    content: {
+      websiteID: testWebsite.id,
+      subscribedID: musicWebsite.id
+    }
+  }
+})
+
+await compose.executeQuery(CREATE_SUBSCRIPTION, {
+  input: {
+    content: {
+      websiteID: testWebsite.id,
+      subscribedID: moviesWebsite.id
+    }
+  }
+})
+
 
 console.log(`${testWebsite.websiteName} ID: ${testWebsite.id}`)
+console.log(`${dumpDocument.websiteName} ID: ${dumpDocument.id}`)
+
