@@ -38,6 +38,7 @@ type Piece @createModel(accountRelation: LIST, description: "Piece of content") 
   name: String! @string(maxLength: 100)
   cid: String! @string(maxLength: 100)
   approved: Boolean!
+  inGarbage: Boolean
 }
 `, function (err) {
   if (err) return console.log(err);
