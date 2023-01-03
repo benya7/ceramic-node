@@ -87,7 +87,7 @@ Execute graphql example queries.
 ```bash
 yarn run examples-queries
 ```
-> This script show Test Website ID and Dump Document ID, these values must be pasted in **riff.cc-data-manager-poc/.env.local**
+> This script show IDs Test Website and Dump Document, these values must be pasted in **riff.cc-data-manager-poc/.env.local**
 
 
 Copy required files in **riff.cc-data-manager-poc/lib**
