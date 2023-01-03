@@ -32,7 +32,7 @@ yarn run generate:did-key <PRIVATE_KEY>
 
 Update node config file with DID key
 
-> If you don't have a config file in your directory yet, simply start the node once via ceramic daemon and exit again. This will create a default config file:
+> If you don't have a config file in your directory yet, simply start the node once via **ceramic daemon** and exit again. This will create a default config file:
 
 ```json
 {
@@ -87,8 +87,10 @@ Execute graphql example queries.
 ```bash
 yarn run examples-queries
 ```
+> This script show Test Website ID and Dump Document ID, these values must be pasted in **riff.cc-data-manager-poc/.env.local**
 
-Copy required files in riff.cc-data-manager-poc/lib
+
+Copy required files in **riff.cc-data-manager-poc/lib**
 ```bash
 composites/Composite.graphql
 composites/definitions.ts
