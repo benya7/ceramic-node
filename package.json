@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "ceramic-node": "CERAMIC_ENABLE_EXPERIMENTAL_COMPOSE_DB='true' ceramic daemon",
-    "clean": "rm -rf composites m schemas/Content.graphql schemas/Subscriptions.graphql && mkdir composites",
+    "clean": "rm -rf composites schemas/FinalModel.graphql schemas/Piece.graphql schemas/Subscription.graphql && mkdir composites",
     "generate-composites": "npm run clean && node scripts/create-composite.js",
     "graphql": "node scripts/run-graphql-server.js",
     "example-queries": "node scripts/execute-example-queries.js"
