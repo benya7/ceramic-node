@@ -24,6 +24,10 @@ Generate DID private key
 ```bash
 yarn run generate:private-key
 ```
+Rename .env.example to .env and update PRIVATE_KEY
+```bash
+PRIVATE_KEY=
+```
 Create DID key from private key
 
 ```bash
@@ -85,7 +89,7 @@ yarn run generate-composites
 Execute graphql example queries.
 
 ```bash
-yarn run examples-queries
+yarn run example-queries
 ```
 > This script show Test WebsiteID, must be pasted in **riff.cc-data-manager-poc/.env.local**
 
