@@ -8,7 +8,6 @@ import { CeramicClient } from '@ceramicnetwork/http-client'
 import { Ed25519Provider } from "key-did-provider-ed25519"
 import { createComposite, writeEncodedCompositeRuntime, writeEncodedComposite, writeGraphQLSchema } from '@composedb/devtools-node'
 
-
 if (!process.env.PRIVATE_KEY) throw new Error("ENVIROMENT VARIABLE PRIVATE KEY UNDEFINED")
 
 // Create DID controller for ceramic client
@@ -29,8 +28,14 @@ console.log("Create composites from schemas...")
 
 // Create EthAccount graphql schema
 fs.writeFile('./schemas/EthAccount.graphql', `type EthAccount @createModel(accountRelation: LIST, description: "An Ethereum Account") {
-  address: String @string(maxLength: 66)
+  address: String! @string(maxLength: 66)
   ensName: String @string(maxLength: 100)
+  metadata: Metadata!
+}
+
+type Metatada {
+  createdAt: String! @string(maxLength:100)
+  updatedAt: String! @string(maxLength:100)
 }
 `, function (err) {
   if (err) return console.log(err);
@@ -52,7 +57,9 @@ fs.writeFile('./schemas/Website.graphql', `type EthAccount @loadModel(id: "${eth
 type Website @createModel(accountRelation: LIST, description: "A Website") {
   ownerID: StreamID! @documentReference(model: "EthAccount")
   owner: EthAccount! @relationDocument(property: "ownerID")
-  websiteName: String! @string(maxLength: 100)
+  websiteName: String! @string(maxLength: 50)
+  description: String @string(maxLength: 150)
+  image: String @string{maxLength: 100}
 }
 `, function (err) {
   if (err) return console.log(err);
@@ -85,6 +92,12 @@ type Piece @createModel(accountRelation: LIST, description: "Piece of content") 
   cid: String @string(maxLength: 100)
   approved: Boolean
   rejected: Boolean
+  metadata: Metadata!
+}
+
+type Metatada {
+  createdAt: String! @string(maxLength:100)
+  updatedAt: String! @string(maxLength:100)
 }
 `, function (err) {
   if (err) return console.log(err);
@@ -109,6 +122,12 @@ type Admin @createModel(accountRelation: LIST, description: "Admin Website") {
   website: Website! @relationDocument(property: "websiteID")
 	adminID: StreamID! @documentReference(model: "EthAccount")
 	admin: EthAccount! @relationDocument(property: "adminID")
+  metadata: Metadata!
+}
+
+type Metatada {
+  createdAt: String! @string(maxLength:100)
+  updatedAt: String! @string(maxLength:100)
 }
 `, function (err) {
   if (err) return console.log(err);
@@ -130,6 +149,12 @@ type Subscription @createModel(accountRelation: LIST, description: "Subcription 
   website: Website! @relationDocument(property: "websiteID")
 	subscribedID: StreamID! @documentReference(model: "Website")
 	subcribedWebsite: Website! @relationDocument(property: "subscribedID")
+  metadata: Metadata!
+}
+
+type Metatada {
+  createdAt: String! @string(maxLength:100)
+  updatedAt: String! @string(maxLength:100)
 }
 `, function (err) {
   if (err) return console.log(err);
