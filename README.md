@@ -83,7 +83,7 @@ yarn run ceramic-node
 Generate graphql schemas and composites.
 
 ```bash
-yarn run generate-composites
+yarn run generate:composites
 ```
 
 Execute graphql example queries.
