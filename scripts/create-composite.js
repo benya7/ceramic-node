@@ -50,8 +50,8 @@ fs.writeFile('./schemas/Website.graphql', `type EthAccount @loadModel(id: "${eth
 }
 
 type Website @createModel(accountRelation: LIST, description: "A Website") {
-  creatorID: StreamID! @documentReference(model: EthAccount)
-  creator: EthAccount! @relationDocument(property: creatorID)
+  creatorID: StreamID! @documentReference(model: "EthAccount")
+  creator: EthAccount! @relationDocument(property: "creatorID")
   websiteName: String! @string(maxLength: 100)
 }
 `, function (err) {
