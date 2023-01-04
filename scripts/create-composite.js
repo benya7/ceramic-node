@@ -26,18 +26,61 @@ const ceramic = new CeramicClient('http://localhost:7007')
 ceramic.did = did
 
 console.log("Create composites from schemas...")
+
+// Create EthAccount graphql schema
+fs.writeFile('./schemas/EthAccount.graphql', `type EthAccount @createModel(accountRelation: LIST, description: "An Ethereum Account") {
+  address: String @string(maxLength: 66)
+  ensName: String @string(maxLength: 100)
+}
+`, function (err) {
+  if (err) return console.log(err);
+  console.log('EthAccount schema created!');
+})
+
+await new Promise((resolve) => setTimeout(() => resolve(), 2000))
+
+// Create EthAccount composite from graphql schema
+const ethAccountComposite = await createComposite(ceramic, './schemas/EthAccount.graphql')
+// Get model stream ID required to create others composites
+const ethAccountModelID = ethAccountComposite.modelIDs[0]
+
+// Create Website graphql schema
+fs.writeFile('./schemas/Website.graphql', `type EthAccount @loadModel(id: "${ethAccountModelID}") {
+  id: ID!
+}
+
+type Website @createModel(accountRelation: LIST, description: "A Website") {
+  creatorID: StreamID! @documentReference(model: EthAccount)
+  creator: EthAccount! @relationDocument(property: creatorID)
+  websiteName: String! @string(maxLength: 100)
+}
+`, function (err) {
+  if (err) return console.log(err);
+  console.log('Website schema created!');
+})
+
+await new Promise((resolve) => setTimeout(() => resolve(), 2000))
+
 // Create Website composite from graphql schema
 const websiteComposite = await createComposite(ceramic, './schemas/Website.graphql')
 // Get model stream ID required to create others composites
-const websiteModelID = websiteComposite.modelIDs[0]
+const websiteModelID = websiteComposite.modelIDs[1]
+
+
 // Create Piece graphql schema
 fs.writeFile('./schemas/Piece.graphql', `type Website @loadModel(id: "${websiteModelID}") {
+  id: ID!
+}
+
+type EthAccount @loadModel(id: "${ethAccountModelID}") {
   id: ID!
 }
 
 type Piece @createModel(accountRelation: LIST, description: "Piece of content") {
   websiteID: StreamID! @documentReference(model: "Website")
   website: Website @relationDocument(property: "websiteID")
+  creatorID: StreamID! @documentReference(model: "EthAccount")
+  creator: EthAccount @relationDocument(property: "creatorID")
   name: String @string(maxLength: 100)
   cid: String @string(maxLength: 100)
   approved: Boolean
@@ -51,7 +94,7 @@ type Piece @createModel(accountRelation: LIST, description: "Piece of content") 
 await new Promise((resolve) => setTimeout(() => resolve(), 2000))
 // Create Piece composite from graphql schema
 const pieceComposite = await createComposite(ceramic, './schemas/Piece.graphql')
-const pieceModelID = pieceComposite.modelIDs[1]
+const pieceModelID = pieceComposite.modelIDs[2]
 
 fs.writeFile('./schemas/Subscription.graphql', `type Website @loadModel(id: "${websiteModelID}") {
   id: ID!
@@ -82,7 +125,13 @@ type Subscription @loadModel(id: "${subscriptionModelID}") {
   id: ID!
 }
 
+type EthAccount @loadModel(id: "${ethAccountModelID}") {
+  id: ID!
+}
+
 type Website @loadModel(id: "${websiteModelID}") {
+  admins: [EthAccount] @relationFrom(model: "EthAccount", property: "id")
+  adminsCount: Int! @relationCountFrom(model: "EthAccount", property: "id")
   pieces: [Piece] @relationFrom(model: "Piece", property: "websiteID")
   piecesCount: Int! @relationCountFrom(model: "Piece", property: "websiteID")
   subscriptions: [Subscription] @relationFrom(model: "Subscription", property: "websiteID")

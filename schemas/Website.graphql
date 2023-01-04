@@ -1,3 +1,0 @@
-type Website @createModel(accountRelation: LIST, description: "A Website") {
-  websiteName: String! @string(maxLength: 100)
-}
