@@ -60,6 +60,12 @@ type Website @createModel(accountRelation: LIST, description: "A Website") {
   websiteName: String! @string(maxLength: 50)
   description: String @string(maxLength: 150)
   image: String @string{maxLength: 100}
+  metadata: Metadata!
+}
+
+type Metatada {
+  createdAt: String! @string(maxLength:100)
+  updatedAt: String! @string(maxLength:100)
 }
 `, function (err) {
   if (err) return console.log(err);
