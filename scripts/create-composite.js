@@ -34,11 +34,11 @@ fs.writeFile('./schemas/Piece.graphql', `type Website @loadModel(id: "${websiteM
 
 type Piece @createModel(accountRelation: LIST, description: "Piece of content") {
   websiteID: StreamID! @documentReference(model: "Website")
-  website: Website! @relationDocument(property: "websiteID")
-  name: String! @string(maxLength: 100)
-  cid: String! @string(maxLength: 100)
-  approved: Boolean!
-  inGarbage: Boolean
+  website: Website @relationDocument(property: "websiteID")
+  name: String @string(maxLength: 100)
+  cid: String @string(maxLength: 100)
+  approved: Boolean
+  rejected: Boolean
 }
 `, function (err) {
   if (err) return console.log(err);
@@ -96,7 +96,6 @@ const finalModelComposite = await createComposite(ceramic, './schemas/FinalModel
 
 // Merge all composites
 //const mergedComposite = Composite.from([pieceComposite, subscriptionComposite, finalModelComposite])
-console.log(finalModelComposite.modelIDs)
 const mergedComposite = finalModelComposite
 
 // Index the models into ceramic node
