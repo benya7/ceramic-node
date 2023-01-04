@@ -24,12 +24,13 @@ Generate DID private key
 ```bash
 yarn run generate:private-key
 ```
-Rename .env.example to .env and update PRIVATE_KEY
+
+Rename .env.example to .env and fill PRIVATE_KEY
 ```bash
 PRIVATE_KEY=
 ```
-Create DID key from private key
 
+Create DID key from private key
 ```bash
 yarn run generate:did-key <PRIVATE_KEY>
 ```
@@ -89,7 +90,7 @@ yarn run generate:composites
 Execute graphql example queries.
 
 ```bash
-yarn run example-queries
+yarn run graphql:example-queries
 ```
 > This script show Test WebsiteID, must be pasted in **riff.cc-data-manager-poc/.env.local**
 
@@ -100,3 +101,8 @@ composites/Composite.graphql
 composites/definitions.ts
 ```
 > Note: These files are required for run composedb client and execute graphql queries
+
+Optionally you can run graphql server with Graphiql interface
+```bash
+yarn run graphql:server
+```
