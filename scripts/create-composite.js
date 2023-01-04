@@ -50,8 +50,8 @@ fs.writeFile('./schemas/Website.graphql', `type EthAccount @loadModel(id: "${eth
 }
 
 type Website @createModel(accountRelation: LIST, description: "A Website") {
-  creatorID: StreamID! @documentReference(model: "EthAccount")
-  creator: EthAccount! @relationDocument(property: "creatorID")
+  ownerID: StreamID! @documentReference(model: "EthAccount")
+  owner: EthAccount! @relationDocument(property: "ownerID")
   websiteName: String! @string(maxLength: 100)
 }
 `, function (err) {
@@ -79,8 +79,8 @@ type EthAccount @loadModel(id: "${ethAccountModelID}") {
 type Piece @createModel(accountRelation: LIST, description: "Piece of content") {
   websiteID: StreamID! @documentReference(model: "Website")
   website: Website @relationDocument(property: "websiteID")
-  creatorID: StreamID! @documentReference(model: "EthAccount")
-  creator: EthAccount @relationDocument(property: "creatorID")
+  ownerID: StreamID! @documentReference(model: "EthAccount")
+  owner: EthAccount @relationDocument(property: "ownerID")
   name: String @string(maxLength: 100)
   cid: String @string(maxLength: 100)
   approved: Boolean
@@ -95,6 +95,31 @@ await new Promise((resolve) => setTimeout(() => resolve(), 2000))
 // Create Piece composite from graphql schema
 const pieceComposite = await createComposite(ceramic, './schemas/Piece.graphql')
 const pieceModelID = pieceComposite.modelIDs[2]
+
+fs.writeFile('./schemas/Admin.graphql', `type Website @loadModel(id: "${websiteModelID}") {
+  id: ID!
+}
+
+type EthAccount @loadModel(id: "${ethAccountModelID}") {
+  id: ID!
+}
+
+type Admin @createModel(accountRelation: LIST, description: "Admin Website") {
+  websiteID: StreamID! @documentReference(model: "Website")
+  website: Website! @relationDocument(property: "websiteID")
+	adminID: StreamID! @documentReference(model: "EthAccount")
+	admin: EthAccount! @relationDocument(property: "adminID")
+}
+`, function (err) {
+  if (err) return console.log(err);
+  console.log('Admin schema created!');
+})
+
+await new Promise((resolve) => setTimeout(() => resolve(), 2000))
+// Create Subscription composite from graphql schema
+const adminComposite = await createComposite(ceramic, './schemas/Admin.graphql')
+const adminCompositeModelID = adminComposite.modelIDs[2]
+
 
 fs.writeFile('./schemas/Subscription.graphql', `type Website @loadModel(id: "${websiteModelID}") {
   id: ID!
@@ -125,17 +150,24 @@ type Subscription @loadModel(id: "${subscriptionModelID}") {
   id: ID!
 }
 
-type EthAccount @loadModel(id: "${ethAccountModelID}") {
+type Admin @loadModel(id: "${adminCompositeModelID}") {
   id: ID!
 }
 
+type EthAccount @loadModel(id: "${ethAccountModelID}") {
+  pieces: [Piece] @relationFrom(model: "Piece", property: "ownerID")
+  piecesCount: Int! @relationCountFrom(model: "Piece", property: "ownerID")
+  managedWebsites: [Admin] @relationFrom(model: "Admin", property: "adminID")
+  managedWebsitesCount: Int! @relationCountFrom(model: "Admin", property: "adminID")
+}
+
 type Website @loadModel(id: "${websiteModelID}") {
-  admins: [EthAccount] @relationFrom(model: "EthAccount", property: "id")
-  adminsCount: Int! @relationCountFrom(model: "EthAccount", property: "id")
   pieces: [Piece] @relationFrom(model: "Piece", property: "websiteID")
   piecesCount: Int! @relationCountFrom(model: "Piece", property: "websiteID")
   subscriptions: [Subscription] @relationFrom(model: "Subscription", property: "websiteID")
   subscriptionsCount: Int! @relationCountFrom(model: "Subscription", property: "websiteID")
+  admins: [Admin] @relationFrom(model: "Admin", property: "websiteID")
+  adminsCount: Int! @relationCountFrom(model: "Admin", property: "websiteID")
 }
 `, function (err) {
   if (err) return console.log(err);
