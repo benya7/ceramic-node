@@ -34,8 +34,8 @@ fs.writeFile('./schemas/EthAccount.graphql', `type EthAccount @createModel(accou
 }
 
 type Metadata {
-  createdAt: String! @string(maxLength:100)
-  updatedAt: String! @string(maxLength:100)
+  createdAt: String! @string(maxLength: 100)
+  updatedAt: String! @string(maxLength: 100)
 }
 `, function (err) {
   if (err) return console.log(err);
@@ -59,13 +59,13 @@ type Website @createModel(accountRelation: LIST, description: "A Website") {
   owner: EthAccount! @relationDocument(property: "ownerID")
   websiteName: String! @string(maxLength: 50)
   description: String @string(maxLength: 150)
-  image: String @string{maxLength: 100}
+  image: String @string(maxLength: 100)
   metadata: Metadata!
 }
 
 type Metadata {
-  createdAt: String! @string(maxLength:100)
-  updatedAt: String! @string(maxLength:100)
+  createdAt: String! @string(maxLength: 100)
+  updatedAt: String! @string(maxLength: 100)
 }
 `, function (err) {
   if (err) return console.log(err);
@@ -78,7 +78,6 @@ await new Promise((resolve) => setTimeout(() => resolve(), 2000))
 const websiteComposite = await createComposite(ceramic, './schemas/Website.graphql')
 // Get model stream ID required to create others composites
 const websiteModelID = websiteComposite.modelIDs[1]
-
 
 // Create Piece graphql schema
 fs.writeFile('./schemas/Piece.graphql', `type Website @loadModel(id: "${websiteModelID}") {
@@ -102,8 +101,8 @@ type Piece @createModel(accountRelation: LIST, description: "Piece of content") 
 }
 
 type Metadata {
-  createdAt: String! @string(maxLength:100)
-  updatedAt: String! @string(maxLength:100)
+  createdAt: String! @string(maxLength: 100)
+  updatedAt: String! @string(maxLength: 100)
 }
 `, function (err) {
   if (err) return console.log(err);
