@@ -33,7 +33,7 @@ fs.writeFile('./schemas/EthAccount.graphql', `type EthAccount @createModel(accou
   metadata: Metadata!
 }
 
-type Metatada {
+type Metadata {
   createdAt: String! @string(maxLength:100)
   updatedAt: String! @string(maxLength:100)
 }
@@ -63,7 +63,7 @@ type Website @createModel(accountRelation: LIST, description: "A Website") {
   metadata: Metadata!
 }
 
-type Metatada {
+type Metadata {
   createdAt: String! @string(maxLength:100)
   updatedAt: String! @string(maxLength:100)
 }
@@ -101,7 +101,7 @@ type Piece @createModel(accountRelation: LIST, description: "Piece of content") 
   metadata: Metadata!
 }
 
-type Metatada {
+type Metadata {
   createdAt: String! @string(maxLength:100)
   updatedAt: String! @string(maxLength:100)
 }
@@ -131,7 +131,7 @@ type Admin @createModel(accountRelation: LIST, description: "Admin Website") {
   metadata: Metadata!
 }
 
-type Metatada {
+type Metadata {
   createdAt: String! @string(maxLength:100)
   updatedAt: String! @string(maxLength:100)
 }
@@ -158,7 +158,7 @@ type Subscription @createModel(accountRelation: LIST, description: "Subcription 
   metadata: Metadata!
 }
 
-type Metatada {
+type Metadata {
   createdAt: String! @string(maxLength:100)
   updatedAt: String! @string(maxLength:100)
 }
