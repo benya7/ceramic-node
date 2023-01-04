@@ -7,6 +7,10 @@ import { getResolver } from "key-did-resolver"
 import { CeramicClient } from '@ceramicnetwork/http-client'
 import { Ed25519Provider } from "key-did-provider-ed25519"
 import { createComposite, writeEncodedCompositeRuntime, writeEncodedComposite, writeGraphQLSchema } from '@composedb/devtools-node'
+
+
+if (!process.env.PRIVATE_KEY) throw new Error("ENVIROMENT VARIABLE PRIVATE KEY UNDEFINED")
+
 // Create DID controller for ceramic client
 const privateKey = fromString(
   process.env.PRIVATE_KEY,
