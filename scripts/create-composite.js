@@ -7,7 +7,6 @@ import { getResolver } from "key-did-resolver"
 import { CeramicClient } from '@ceramicnetwork/http-client'
 import { Ed25519Provider } from "key-did-provider-ed25519"
 import { createComposite, writeEncodedCompositeRuntime, writeEncodedComposite, writeGraphQLSchema } from '@composedb/devtools-node'
-import { Composite } from '@composedb/devtools'
 // Create DID controller for ceramic client
 const privateKey = fromString(
   process.env.PRIVATE_KEY,
@@ -91,12 +90,8 @@ type Website @loadModel(id: "${websiteModelID}") {
 })
 
 await new Promise((resolve) => setTimeout(() => resolve(), 2000))
-// Create FinalModel composite from graphql schema
-const finalModelComposite = await createComposite(ceramic, './schemas/FinalModel.graphql')
-
-// Merge all composites
-//const mergedComposite = Composite.from([pieceComposite, subscriptionComposite, finalModelComposite])
-const mergedComposite = finalModelComposite
+// Create FinalModel composite from graphql schema. Merge all composites
+const mergedComposite = await createComposite(ceramic, './schemas/FinalModel.graphql')
 
 // Index the models into ceramic node
 console.log("Indexing models...")
