@@ -99,64 +99,11 @@ const CREATE_SUBSCRIPTION = `
 
 console.log("Executing queries...")
 
-// Create owner and test users eth accounts
-
-const { data: admintEthAccountData } = await compose.executeQuery(CREATE_ETH_ACCOUNT, {
-  input: {
-    content: {
-      address: process.env.ADMIN_ETH_ADDRESS,
-      metadata: {
-        createdAt: (new Date).toISOString(),
-        updatedAt: (new Date).toISOString()
-      }
-    }
-  }
-})
-const { data: testUser1EthAccountData } = await compose.executeQuery(CREATE_ETH_ACCOUNT, {
-  input: {
-    content: {
-      address: "0x5e164849Ed48E8e1B592C2d332D069753A14b572",
-      metadata: {
-        createdAt: (new Date).toISOString(),
-        updatedAt: (new Date).toISOString()
-      }
-    }
-  }
-})
-const { data: testUser2EthAccountData } = await compose.executeQuery(CREATE_ETH_ACCOUNT, {
-  input: {
-    content: {
-      address: "0xBe0789733CbaDd3F91e7cf6630d6F3d7acDAC10a",
-      metadata: {
-        createdAt: (new Date).toISOString(),
-        updatedAt: (new Date).toISOString()
-      }
-    }
-  }
-})
-const { data: testUser3EthAccountData } = await compose.executeQuery(CREATE_ETH_ACCOUNT, {
-  input: {
-    content: {
-      address: "0xD0825C04a6FADf8Fba6e01E8bC5fdbe994a3f5a4",
-      metadata: {
-        createdAt: (new Date).toISOString(),
-        updatedAt: (new Date).toISOString()
-      }
-    }
-  }
-})
-
-const adminEthAccount = admintEthAccountData.createEthAccount.document
-const testUser1EthAccount = testUser1EthAccountData.createEthAccount.document
-const testUser2EthAccount = testUser2EthAccountData.createEthAccount.document
-const testUser3EthAccount = testUser3EthAccountData.createEthAccount.document
-
 // Create websites
 const { data: testWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, {
   input: {
     content: {
       websiteName: "Test Website",
-      ownerID: adminEthAccount.id,
       metadata: {
         createdAt: (new Date).toISOString(),
         updatedAt: (new Date).toISOString()
@@ -168,7 +115,6 @@ const { data: musicWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, {
   input: {
     content: {
       websiteName: "Music Website",
-      ownerID: adminEthAccount.id,
       metadata: {
         createdAt: (new Date).toISOString(),
         updatedAt: (new Date).toISOString()
@@ -180,7 +126,6 @@ const { data: moviesWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, {
   input: {
     content: {
       websiteName: "Movies Website",
-      ownerID: adminEthAccount.id,
       metadata: {
         createdAt: (new Date).toISOString(),
         updatedAt: (new Date).toISOString()
@@ -192,7 +137,6 @@ const { data: gamesWebsiteData } = await compose.executeQuery(CREATE_WEBSITE, {
   input: {
     content: {
       websiteName: "Games Website",
-      ownerID: adminEthAccount.id,
       metadata: {
         createdAt: (new Date).toISOString(),
         updatedAt: (new Date).toISOString()
@@ -206,11 +150,12 @@ const musicWebsite = musicWebsiteData.createWebsite.document
 const moviesWebsite = moviesWebsiteData.createWebsite.document
 const gamesWebsite = gamesWebsiteData.createWebsite.document
 
-// Create admin for Test Website
-await compose.executeQuery(CREATE_ADMIN, {
+// Create users eth accounts
+
+const { data: admintEthAccountData } = await compose.executeQuery(CREATE_ETH_ACCOUNT, {
   input: {
     content: {
-      adminID: adminEthAccount.id,
+      address: process.env.ADMIN_ETH_ADDRESS,
       websiteID: testWebsite.id,
       metadata: {
         createdAt: (new Date).toISOString(),
@@ -219,7 +164,62 @@ await compose.executeQuery(CREATE_ADMIN, {
     }
   }
 })
+const { data: testUser1EthAccountData } = await compose.executeQuery(CREATE_ETH_ACCOUNT, {
+  input: {
+    content: {
+      address: "0x5e164849Ed48E8e1B592C2d332D069753A14b572",
+      websiteID: testWebsite.id,
+      metadata: {
+        createdAt: (new Date).toISOString(),
+        updatedAt: (new Date).toISOString()
+      }
+    }
+  }
+})
+const { data: testUser2EthAccountData } = await compose.executeQuery(CREATE_ETH_ACCOUNT, {
+  input: {
+    content: {
+      address: "0xBe0789733CbaDd3F91e7cf6630d6F3d7acDAC10a",
+      websiteID: musicWebsite.id,
+      metadata: {
+        createdAt: (new Date).toISOString(),
+        updatedAt: (new Date).toISOString()
+      }
+    }
+  }
+})
+const { data: testUser3EthAccountData } = await compose.executeQuery(CREATE_ETH_ACCOUNT, {
+  input: {
+    content: {
+      address: "0xD0825C04a6FADf8Fba6e01E8bC5fdbe994a3f5a4",
+      websiteID: moviesWebsite.id,
+      metadata: {
+        createdAt: (new Date).toISOString(),
+        updatedAt: (new Date).toISOString()
+      }
+    }
+  }
+})
 
+const adminEthAccount = admintEthAccountData.createEthAccount.document
+const testUser1EthAccount = testUser1EthAccountData.createEthAccount.document
+const testUser2EthAccount = testUser2EthAccountData.createEthAccount.document
+const testUser3EthAccount = testUser3EthAccountData.createEthAccount.document
+
+
+// Create admin for Test Website
+await compose.executeQuery(CREATE_ADMIN, {
+  input: {
+    content: {
+      adminID: adminEthAccount.id,
+      websiteID: adminEthAccount.websiteID,
+      metadata: {
+        createdAt: (new Date).toISOString(),
+        updatedAt: (new Date).toISOString()
+      }
+    }
+  }
+})
 
 // Create pieces
 
@@ -227,7 +227,7 @@ await compose.executeQuery(CREATE_PIECE, {
   input: {
     content: {
       ownerID: testUser1EthAccount.id,
-      websiteID: testWebsite.id,
+      websiteID: testUser1EthAccount.websiteID,
       name: "Aguile",
       cid: "bafkreifwanxptzn7jct56yl7q3h633ymn7bb2bjut6sxyulnas3skyg47e",
       approved: true,
@@ -242,8 +242,8 @@ await compose.executeQuery(CREATE_PIECE, {
 await compose.executeQuery(CREATE_PIECE, {
   input: {
     content: {
-      ownerID: testUser3EthAccount.id,
-      websiteID: testWebsite.id,
+      ownerID: testUser1EthAccount.id,
+      websiteID: testUser1EthAccount.websiteID,
       name: "ryan cat meme",
       cid: "bafkreiaakxh74mhjx2bflfv34rcpo27ynqbny3pg5nzrg6wjkw7qti2bmq",
       approved: false,
@@ -258,8 +258,8 @@ await compose.executeQuery(CREATE_PIECE, {
 await compose.executeQuery(CREATE_PIECE, {
   input: {
     content: {
-      ownerID: testUser3EthAccount.id,
-      websiteID: musicWebsite.id,
+      ownerID: testUser2EthAccount.id,
+      websiteID: testUser2EthAccount.websiteID,
       name: "The Dark Side Of The Moon - Pink Floyd",
       cid: "bafkreidybluf5b6o4mb345lnpgrpa5g3e2ztbndou4lj7y3crts4yqy53u",
       approved: false,
@@ -275,7 +275,7 @@ await compose.executeQuery(CREATE_PIECE, {
   input: {
     content: {
       ownerID: testUser2EthAccount.id,
-      websiteID: musicWebsite.id,
+      websiteID: testUser2EthAccount.websiteID,
       name: "The King Of Limbs - Radiohead",
       cid: "bafkreibgighuh2i2ndn4vk4iustoveexry2nshjekgnebhfxvgkptu4yw4",
       approved: true,
@@ -290,8 +290,8 @@ await compose.executeQuery(CREATE_PIECE, {
 await compose.executeQuery(CREATE_PIECE, {
   input: {
     content: {
-      ownerID: testUser1EthAccount.id,
-      websiteID: moviesWebsite.id,
+      ownerID: testUser3EthAccount.id,
+      websiteID: testUser3EthAccount.websiteID,
       name: "Avatar (2009)",
       cid: "bafkreiff5rexqbzrcr4dmwh5vkbhpidkuauxwlqjvs4d4f3h62tplqqefu",
       approved: true,
@@ -306,8 +306,8 @@ await compose.executeQuery(CREATE_PIECE, {
 await compose.executeQuery(CREATE_PIECE, {
   input: {
     content: {
-      ownerID: testUser1EthAccount.id,
-      websiteID: moviesWebsite.id,
+      ownerID: testUser3EthAccount.id,
+      websiteID: testUser3EthAccount.websiteID,
       name: "The Terminator (1984)",
       cid: "bafkreie5vk3pum2xseuvfzszjalzn54vxprhq4ftkvdpirllf4zvyc7uza",
       approved: false,

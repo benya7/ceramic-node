@@ -26,37 +26,8 @@ ceramic.did = did
 
 console.log("Create composites from schemas...")
 
-// Create EthAccount graphql schema
-fs.writeFile('./schemas/EthAccount.graphql', `type EthAccount @createModel(accountRelation: LIST, description: "An Ethereum Account") {
-  address: String! @string(maxLength: 66)
-  ensName: String @string(maxLength: 100)
-  metadata: Metadata!
-}
-
-type Metadata {
-  createdAt: String! @string(maxLength: 100)
-  updatedAt: String! @string(maxLength: 100)
-}
-`, function (err) {
-  if (err) return console.log(err);
-  console.log('EthAccount schema created!');
-})
-
-await new Promise((resolve) => setTimeout(() => resolve(), 2000))
-
-// Create EthAccount composite from graphql schema
-const ethAccountComposite = await createComposite(ceramic, './schemas/EthAccount.graphql')
-// Get model stream ID required to create others composites
-const ethAccountModelID = ethAccountComposite.modelIDs[0]
-
 // Create Website graphql schema
-fs.writeFile('./schemas/Website.graphql', `type EthAccount @loadModel(id: "${ethAccountModelID}") {
-  id: ID!
-}
-
-type Website @createModel(accountRelation: LIST, description: "A Website") {
-  ownerID: StreamID! @documentReference(model: "EthAccount")
-  owner: EthAccount! @relationDocument(property: "ownerID")
+fs.writeFile('./schemas/Website.graphql', `type Website @createModel(accountRelation: LIST, description: "A Website") {
   websiteName: String! @string(maxLength: 50)
   description: String @string(maxLength: 150)
   image: String @string(maxLength: 100)
@@ -77,7 +48,35 @@ await new Promise((resolve) => setTimeout(() => resolve(), 2000))
 // Create Website composite from graphql schema
 const websiteComposite = await createComposite(ceramic, './schemas/Website.graphql')
 // Get model stream ID required to create others composites
-const websiteModelID = websiteComposite.modelIDs[1]
+const websiteModelID = websiteComposite.modelIDs[0]
+
+// Create EthAccount graphql schema
+fs.writeFile('./schemas/EthAccount.graphql', `type Website @loadModel(id: "${websiteModelID}") {
+  id: ID!
+}
+
+type EthAccount @createModel(accountRelation: LIST, description: "An Ethereum Account") {
+  address: String! @string(maxLength: 66)
+  ensName: String @string(maxLength: 100)
+  websiteID: StreamID! @documentReference(model: "Website")
+  metadata: Metadata!
+}
+
+type Metadata {
+  createdAt: String! @string(maxLength: 100)
+  updatedAt: String! @string(maxLength: 100)
+}
+`, function (err) {
+  if (err) return console.log(err);
+  console.log('EthAccount schema created!');
+})
+
+await new Promise((resolve) => setTimeout(() => resolve(), 2000))
+
+// Create EthAccount composite from graphql schema
+const ethAccountComposite = await createComposite(ceramic, './schemas/EthAccount.graphql')
+// Get model stream ID required to create others composites
+const ethAccountModelID = ethAccountComposite.modelIDs[1]
 
 // Create Piece graphql schema
 fs.writeFile('./schemas/Piece.graphql', `type Website @loadModel(id: "${websiteModelID}") {
@@ -198,6 +197,8 @@ type Website @loadModel(id: "${websiteModelID}") {
   subscriptionsCount: Int! @relationCountFrom(model: "Subscription", property: "websiteID")
   admins: [Admin] @relationFrom(model: "Admin", property: "websiteID")
   adminsCount: Int! @relationCountFrom(model: "Admin", property: "websiteID")
+  users: [EthAccount] @relationFrom(model: "EthAccount", property: "websiteID")
+  usersCount: Int! @relationCountFrom(model: "EthAccount", property: "websiteID")
 }
 `, function (err) {
   if (err) return console.log(err);
