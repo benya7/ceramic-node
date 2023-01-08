@@ -152,7 +152,7 @@ type Subscription @createModel(accountRelation: LIST, description: "Subcription 
   websiteID: StreamID! @documentReference(model: "Website")
   website: Website! @relationDocument(property: "websiteID")
 	subscribedID: StreamID! @documentReference(model: "Website")
-	subcribedWebsite: Website! @relationDocument(property: "subscribedID")
+	subscribedWebsite: Website! @relationDocument(property: "subscribedID")
   metadata: Metadata!
 }
 
