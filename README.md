@@ -87,6 +87,11 @@ Generate graphql schemas and composites.
 yarn run generate:composites
 ```
 
+Fill ADMIN_ETH_ADDRESS on .env file to create an website admin. Must be a valid Ethereum Address
+```bash
+ADMIN_ETH_ADDRESS=
+```
+
 Execute graphql example queries.
 
 ```bash
