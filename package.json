@@ -6,9 +6,9 @@
     "clean": "rm -rf composites schemas && mkdir composites schemas",
     "generate:private-key": "composedb did:generate-private-key",
     "generate:did-key": "composedb did:from-private-key",
-    "generate:composites": "npm run clean && node scripts/create-composite.js",
+    "generate:composites": "npm run clean && node scripts/create-composites.js",
     "graphql:server": "node scripts/run-graphql-server.js",
-    "graphql:example-queries": "node scripts/execute-example-queries.js"
+    "graphql:example-queries": "node scripts/example-queries.js"
   },
   "keywords": [],
   "author": "en0c-026",
